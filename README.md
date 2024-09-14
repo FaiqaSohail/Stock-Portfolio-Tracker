@@ -1,2 +1,2 @@
-# Stock-Portfolio-Tracker--C-A-_--2
+# Stock-Portfolio-Tracker-CodeAlpha_Task-2
 Create a stock portfolio tracking tool that allows users to add, remove, and track the performance of their stock investments. Utilize financial APIs for real-time stock data
