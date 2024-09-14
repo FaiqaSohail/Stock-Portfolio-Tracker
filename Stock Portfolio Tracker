@@ -1,0 +1,89 @@
+pip install yfinance pandas 
+import yfinance as yf
+import pandas as pd
+
+# Portfolio Dictionary to track stock holdings
+portfolio = {}
+
+# Function to add a stock to the portfolio
+def add_stock(stock_symbol, num_shares):
+    stock_symbol = stock_symbol.upper()
+    stock = yf.Ticker(stock_symbol)
+    
+    # Get current price
+    stock_info = stock.history(period="1d")
+    current_price = stock_info['Close'][0]
+    
+    # Add stock to portfolio
+    portfolio[stock_symbol] = {
+        'num_shares': num_shares,
+        'current_price': current_price,
+        'total_value': num_shares * current_price
+    }
+    print(f"{num_shares} shares of {stock_symbol} added to your portfolio at {current_price} per share.")
+
+# Function to remove a stock from the portfolio
+def remove_stock(stock_symbol):
+    stock_symbol = stock_symbol.upper()
+    if stock_symbol in portfolio:
+        del portfolio[stock_symbol]
+        print(f"{stock_symbol} removed from your portfolio.")
+    else:
+        print(f"{stock_symbol} is not in your portfolio.")
+
+# Function to view the portfolio
+def view_portfolio():
+    if not portfolio:
+        print("Your portfolio is empty.")
+        return
+    
+    # Create a DataFrame for a neat view
+    df = pd.DataFrame(portfolio).T
+    df['total_value'] = df['num_shares'] * df['current_price']
+    print("\nYour Portfolio:")
+    print(df)
+
+# Function to track real-time performance of the portfolio
+def track_performance():
+    for stock_symbol in portfolio.keys():
+        stock = yf.Ticker(stock_symbol)
+        stock_info = stock.history(period="1d")
+        current_price = stock_info['Close'][0]
+        
+        # Update stock price in portfolio
+        portfolio[stock_symbol]['current_price'] = current_price
+        portfolio[stock_symbol]['total_value'] = portfolio[stock_symbol]['num_shares'] * current_price
+    
+    view_portfolio()
+
+# Main Menu
+def main():
+    while True:
+        print("\nMenu:")
+        print("1. Add Stock")
+        print("2. Remove Stock")
+        print("3. View Portfolio")
+        print("4. Track Performance (Refresh Data)")
+        print("5. Exit")
+        
+        choice = input("Choose an option: ")
+        
+        if choice == '1':
+            stock_symbol = input("Enter stock symbol: ")
+            num_shares = int(input("Enter number of shares: "))
+            add_stock(stock_symbol, num_shares)
+        elif choice == '2':
+            stock_symbol = input("Enter stock symbol to remove: ")
+            remove_stock(stock_symbol)
+        elif choice == '3':
+            view_portfolio()
+        elif choice == '4':
+            track_performance()
+        elif choice == '5':
+            print("Exiting portfolio tracker.")
+            break
+        else:
+            print("Invalid option, please try again.")
+
+if __name__ == "__main__":
+    main()
